@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Union
 
 
 class Type(Enum):
@@ -12,6 +13,18 @@ class Expression:
 
     def evaluate(self) -> None:  # TODO choose correct return type
         pass
+
+
+class VariableValue(Expression):
+    def __init__(self, name: str) -> None:
+        super(VariableValue, self).__init__(Type.NAT)
+        self.name = name
+
+
+class Constant(Expression):
+    def __init__(self, expr_type: Type, value: Union[int, bool]) -> None:
+        super(Constant, self).__init__(expr_type)
+        self.value = value
 
 
 class Plus(Expression):
@@ -28,10 +41,18 @@ class Minus(Expression):
         self.e2 = e2
 
 
-class VariableValue(Expression):
-    def __init__(self, name: str) -> None:
-        super(VariableValue, self).__init__(Type.NAT)
-        self.name = name
+class Equal(Expression):
+    def __init__(self, e1: Expression, e2: Expression) -> None:
+        super(Equal, self).__init__(Type.BOOL)
+        self.e1 = e1
+        self.e2 = e2
+
+
+class Less(Expression):
+    def __init__(self, e1: Expression, e2: Expression) -> None:
+        super(Less, self).__init__(Type.BOOL)
+        self.e1 = e1
+        self.e2 = e2
 
 
 class And(Expression):
@@ -77,3 +98,8 @@ class GoTo(Command):
         super(GoTo, self).__init__(line)
         self.condition = condition
         self.other_line = other_line
+
+
+class Stop(Command):
+    def __init__(self, line: int) -> None:
+        super(Stop, self).__init__(line)
