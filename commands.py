@@ -11,7 +11,7 @@ class Expression:
     def __init__(self, expr_type: Type) -> None:
         self.type = expr_type
 
-    def evaluate(self) -> None:  # TODO choose correct return type
+    def evaluate(self, vars: dict, i: int) -> Union[int, bool]:
         pass
 
 
@@ -20,11 +20,17 @@ class VariableValue(Expression):
         super(VariableValue, self).__init__(Type.NAT)
         self.name = name
 
+    def evaluate(self, vars: dict, i: int) -> int:
+        return vars[self.name][i]
+
 
 class Constant(Expression):
     def __init__(self, expr_type: Type, value: Union[int, bool]) -> None:
         super(Constant, self).__init__(expr_type)
         self.value = value
+
+    def evaluate(self, vars: dict, i: int) -> Union[int, bool]:
+        return self.value
 
 
 class Plus(Expression):
@@ -33,12 +39,17 @@ class Plus(Expression):
         self.e1 = e1
         self.e2 = e2
 
+    def evaluate(self, vars: dict, i: int) -> int:
+        return self.e1.evaluate(vars, i) + self.e2.evaluate(vars, i)
 
 class Minus(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
         super(Minus, self).__init__(Type.NAT)
         self.e1 = e1
         self.e2 = e2
+
+    def evaluate(self, vars: dict, i: int) -> int:
+        return self.e1.evaluate(vars, i) - self.e2.evaluate(vars, i)
 
 
 class Equal(Expression):
@@ -47,12 +58,18 @@ class Equal(Expression):
         self.e1 = e1
         self.e2 = e2
 
+    def evaluate(self, vars: dict, i: int) -> bool:
+        return self.e1.evaluate(vars, i) == self.e2.evaluate(vars, i)
+
 
 class Less(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
         super(Less, self).__init__(Type.BOOL)
         self.e1 = e1
         self.e2 = e2
+
+    def evaluate(self, vars: dict, i: int) -> bool:
+        return self.e1.evaluate(vars, i) < self.e2.evaluate(vars, i)
 
 
 class And(Expression):
@@ -61,6 +78,9 @@ class And(Expression):
         self.e1 = e1
         self.e2 = e2
 
+    def evaluate(self, vars: dict, i: int) -> bool:
+        return self.e1.evaluate(vars, i) and self.e2.evaluate(vars, i)
+
 
 class Or(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
@@ -68,11 +88,17 @@ class Or(Expression):
         self.e1 = e1
         self.e2 = e2
 
+    def evaluate(self, vars: dict, i: int) -> bool:
+        return self.e1.evaluate(vars, i) or self.e2.evaluate(vars, i)
+
 
 class Not(Expression):
     def __init__(self, e: Expression) -> None:
         super(Not, self).__init__(Type.BOOL)
         self.e = e
+
+    def evaluate(self, vars: dict, i: int) -> bool:
+        return not self.e.evaluate(vars, i)
 
 
 class Variable:
