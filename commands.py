@@ -42,6 +42,7 @@ class Plus(Expression):
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) + self.e2.evaluate(vars, i)
 
+
 class Minus(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
         super(Minus, self).__init__(Type.NAT)
@@ -50,6 +51,26 @@ class Minus(Expression):
 
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) - self.e2.evaluate(vars, i)
+
+
+class Product(Expression):
+    def __init__(self, e1: Expression, e2: Expression) -> None:
+        super(Product, self).__init__(Type.NAT)
+        self.e1 = e1
+        self.e2 = e2
+
+    def evaluate(self, vars: dict, i: int) -> int:
+        return self.e1.evaluate(vars, i) * self.e2.evaluate(vars, i)
+
+
+class Division(Expression):
+    def __init__(self, e1: Expression, e2: Expression) -> None:
+        super(Division, self).__init__(Type.NAT)
+        self.e1 = e1
+        self.e2 = e2
+
+    def evaluate(self, vars: dict, i: int) -> int:
+        return self.e1.evaluate(vars, i) // self.e2.evaluate(vars, i)
 
 
 class Equal(Expression):
