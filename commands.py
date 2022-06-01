@@ -23,6 +23,9 @@ class VariableValue(Expression):
     def evaluate(self, vars: dict, i: int) -> int:
         return vars[self.name][i]
 
+    def __repr__(self) -> str:
+        return repr(f'{self.name}')
+
 
 class Constant(Expression):
     def __init__(self, expr_type: Type, value: Union[int, bool]) -> None:
@@ -31,6 +34,9 @@ class Constant(Expression):
 
     def evaluate(self, vars: dict, i: int) -> Union[int, bool]:
         return self.value
+
+    def __repr__(self) -> str:
+        return repr(f'{self.value}')
 
 
 class Plus(Expression):
@@ -42,6 +48,9 @@ class Plus(Expression):
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) + self.e2.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} + {self.e2})')
+
 
 class Minus(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
@@ -51,6 +60,9 @@ class Minus(Expression):
 
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) - self.e2.evaluate(vars, i)
+
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} - {self.e2})')
 
 
 class Product(Expression):
@@ -62,6 +74,9 @@ class Product(Expression):
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) * self.e2.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} * {self.e2})')
+
 
 class Division(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
@@ -71,6 +86,9 @@ class Division(Expression):
 
     def evaluate(self, vars: dict, i: int) -> int:
         return self.e1.evaluate(vars, i) // self.e2.evaluate(vars, i)
+
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} / {self.e2})')
 
 
 class Equal(Expression):
@@ -82,6 +100,9 @@ class Equal(Expression):
     def evaluate(self, vars: dict, i: int) -> bool:
         return self.e1.evaluate(vars, i) == self.e2.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} == {self.e2})')
+
 
 class Less(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
@@ -91,6 +112,9 @@ class Less(Expression):
 
     def evaluate(self, vars: dict, i: int) -> bool:
         return self.e1.evaluate(vars, i) < self.e2.evaluate(vars, i)
+
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} < {self.e2})')
 
 
 class And(Expression):
@@ -102,6 +126,9 @@ class And(Expression):
     def evaluate(self, vars: dict, i: int) -> bool:
         return self.e1.evaluate(vars, i) and self.e2.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} && {self.e2})')
+
 
 class Or(Expression):
     def __init__(self, e1: Expression, e2: Expression) -> None:
@@ -112,6 +139,9 @@ class Or(Expression):
     def evaluate(self, vars: dict, i: int) -> bool:
         return self.e1.evaluate(vars, i) or self.e2.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'({self.e1} || {self.e2})')
+
 
 class Not(Expression):
     def __init__(self, e: Expression) -> None:
@@ -121,10 +151,16 @@ class Not(Expression):
     def evaluate(self, vars: dict, i: int) -> bool:
         return not self.e.evaluate(vars, i)
 
+    def __repr__(self) -> str:
+        return repr(f'!({self.e})')
+
 
 class Variable:
     def __init__(self, name: str) -> None:
         self.name = name
+
+    def __repr__(self) -> str:
+        return repr(self.name)
 
 
 class Command:
@@ -138,6 +174,9 @@ class Assign(Command):
         self.var = var
         self.expr = expr
 
+    def __repr__(self) -> str:
+        return repr(f'{self.line}: {self.var.name} = {self.expr}')
+
 
 class GoTo(Command):
     def __init__(self, line: int, condition: Expression,
@@ -146,7 +185,14 @@ class GoTo(Command):
         self.condition = condition
         self.other_line = other_line
 
+    def __repr__(self) -> str:
+        return repr(f'{self.line}: {self.condition} => goto {self.other_line}')
+
 
 class Stop(Command):
     def __init__(self, line: int) -> None:
         super(Stop, self).__init__(line)
+
+    def __repr__(self) -> str:
+        return repr(f'{self.line}: stop')
+
