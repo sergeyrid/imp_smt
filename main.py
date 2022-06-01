@@ -16,7 +16,6 @@ def create_solver(commands: List[Command], variables: List[Variable]):
     i = Int('i')
     goal_i = Int('goal_i')
     s.add(0 <= goal_i)
-    s.add(goal_i < 20)
     for command in commands:
         if isinstance(command, GoTo):
             print(command.condition.evaluate(vars, i))
@@ -54,8 +53,8 @@ def get_solver_final_values(s: Solver, variables: List[Variable]):
     else:
         print("Unsat!")
 
-text = "a = 1;"\
-       "b = 2;"\
+text = "a = 3;"\
+       "b = 5;"\
     "c = a;"\
     "ans = 0;"\
     "while (0 < c) {"\
@@ -68,7 +67,5 @@ p = Parser(text)
 commands_, variables_ = p.get_parsed()
 
 s = create_solver(commands_, variables_)
-# print(s.check())
-# print(s.model())
 final_values = get_solver_final_values(s, variables_)
 print(final_values)
