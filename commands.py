@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Union
-from z3 import Not as zNot
+from z3 import And as zAnd, Or as zOr, Not as zNot
 
 
 class Type(Enum):
@@ -125,7 +125,7 @@ class And(Expression):
         self.e2 = e2
 
     def evaluate(self, vars: dict, i: int) -> bool:
-        return self.e1.evaluate(vars, i) and self.e2.evaluate(vars, i)
+        return zAnd(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
 
     def __repr__(self) -> str:
         return repr(f'({self.e1} && {self.e2})')
@@ -138,7 +138,7 @@ class Or(Expression):
         self.e2 = e2
 
     def evaluate(self, vars: dict, i: int) -> bool:
-        return self.e1.evaluate(vars, i) or self.e2.evaluate(vars, i)
+        return zOr(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
 
     def __repr__(self) -> str:
         return repr(f'({self.e1} || {self.e2})')
