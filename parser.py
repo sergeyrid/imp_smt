@@ -51,7 +51,7 @@ class Parser(Grammar):  # TODO fix everything
         if tree[0] is Parser.expr or tree[0] is Parser.atom:
             return self.parse_expr(tree[1])
         if tree[0] is Parser.brackets_expr:
-            return self.parse_expr(tree[1])
+            return self.parse_expr(tree[2])
         if tree[0] is Parser.T.variable:
             name = tree[1]
             if name not in self.variables:
@@ -132,4 +132,4 @@ class Parser(Grammar):  # TODO fix everything
     def get_parsed(self) -> tuple:
         tree = Parser.parse(self.text)
         commands = self.parse_commands(tree[1], 0)
-        return commands, self.variables
+        return commands, self.variables.values()

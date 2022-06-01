@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Union
+from z3 import Not as zNot
 
 
 class Type(Enum):
@@ -149,7 +150,8 @@ class Not(Expression):
         self.e = e
 
     def evaluate(self, vars: dict, i: int) -> bool:
-        return not self.e.evaluate(vars, i)
+        print(self.e.evaluate(vars, i))
+        return zNot(self.e.evaluate(vars, i))
 
     def __repr__(self) -> str:
         return repr(f'!({self.e})')
