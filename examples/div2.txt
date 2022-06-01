@@ -1,0 +1,24 @@
+a = 5;
+b = 3;
+q = 0;
+r = 0;
+cur = 1;
+while (10 * cur * b < a || 10 * cur * b == a) {
+    cur = cur * 10;
+};
+while (0 < cur) {
+    while (b * (q + cur) < a || b * (q + cur) == a) {
+        q = q + cur;
+    };
+    new_cur = 1;
+    while (10 * new_cur < cur) {
+        new_cur = new_cur * 10;
+    };
+    if (cur == 1) {
+        cur = 0;
+    } else {
+        cur = new_cur;
+    };
+};
+r = a - b * q;
+stop;

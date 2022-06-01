@@ -1,0 +1,35 @@
+n = 5;
+a00 = 1;
+a01 = 0;
+a10 = 0;
+a11 = 1;
+cur_n = 0;
+while (cur_n < n) {
+    cur_add = 1;
+    b00 = 1;
+    b01 = 1;
+    b10 = 1;
+    b11 = 0;
+    while (cur_n + 2 * cur_add < n || cur_n + 2 * cur_add == n) {
+        cur_add = 2 * cur_add;
+        c00 = b00 * b00 + b01 * b10;
+        c01 = b00 * b01 + b01 * b11;
+        c10 = b10 * b00 + b11 * b10;
+        c11 = b10 * b01 + b11 * b11;
+        b00 = c00;
+        b01 = c01;
+        b10 = c10;
+        b11 = c11;
+    };
+    c00 = a00 * b00 + a01 * b10;
+    c01 = a00 * b01 + a01 * b11;
+    c10 = a10 * b00 + a11 * b10;
+    c11 = a10 * b01 + a11 * b11;
+    a00 = c00;
+    a01 = c01;
+    a10 = c10;
+    a11 = c11;
+    cur_n = cur_n + cur_add;
+};
+ans = a00;
+stop;

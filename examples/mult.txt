@@ -1,0 +1,9 @@
+a = 5;
+b = 3;
+c = a;
+ans = 0;
+while (0 < c) {
+    ans = ans + b;
+    c = c - 1;
+};
+stop;
