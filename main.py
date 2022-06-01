@@ -37,6 +37,9 @@ def create_solver(commands: List[Command], variables: List[Variable]):
             else:
                 s.add(ForAll([i], Implies(And(0 <= i, i < goal_i, lines[i] == command.line),
                                           vars[var.name][i + 1] == vars[var.name][i])))
+    for var in variables:
+        final_var = Int(var.name + '_final')
+        s.add(final_var == vars[var.name][goal_i])
     return s
 
 
@@ -45,10 +48,8 @@ def get_solver_final_values(s: Solver, variables: List[Variable]):
         values = s.model()
         final_values = dict()
         for var in variables:
-            goal_i = Int('goal_i')
-            ans = Int('a')
-            print(values)
-            # final_values[var.name] = values[ans][values[goal_i]]
+            final_var = Int(var.name + '_final')
+            final_values[var.name] = values[final_var]
         return final_values
     else:
         print("Unsat!")
@@ -67,7 +68,7 @@ p = Parser(text)
 commands_, variables_ = p.get_parsed()
 
 s = create_solver(commands_, variables_)
-print(s.check())
-print(s.model())
+# print(s.check())
+# print(s.model())
 final_values = get_solver_final_values(s, variables_)
 print(final_values)
