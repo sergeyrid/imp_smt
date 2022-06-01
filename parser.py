@@ -133,22 +133,3 @@ class Parser(Grammar):  # TODO fix everything
         tree = Parser.parse(self.text)
         commands = self.parse_commands(tree[1], 0)
         return commands, self.variables
-
-
-parser = Parser("a = a && b;"
-                "while a - 7 < 0 {"
-                "   b = b + 1;"
-                "   stop;"
-                "   stop;"
-                "   stop;"
-                "};"
-                "stop;"
-                "stop;"
-                "stop;"
-                "stop;"
-                "stop;"
-                "stop;"
-                "stop;")
-
-for command in parser.get_parsed()[0]:
-    print(command)
