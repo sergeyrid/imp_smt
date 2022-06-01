@@ -1,0 +1,12 @@
+n = 5;
+a = 0;
+b = 1;
+cur_n = 0;
+while (cur_n < n) {
+    c = a + b;
+    a = b;
+    b = c;
+    cur_n = cur_n + 1;
+};
+ans = b;
+stop;

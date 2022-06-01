@@ -4,12 +4,13 @@ from typing import List
 
 
 def create_solver(commands: List[Command], variables: List[Variable]):
-    lines = Array('line', IntSort(), IntSort())
+    lines = Array('lines', IntSort(), IntSort())
     vars = dict()
     s = Solver()
     for var in variables:
         vars[var.name] = Array(var.name, IntSort(), IntSort())
         s.add(vars[var.name][0] == 0)
+    s.add(lines[0] == 0)
     i = Int('i')
     goal_i = Int('goal_i')
     for command in commands:
