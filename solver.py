@@ -14,6 +14,7 @@ def create_solver(commands: List[Command], variables: List[Variable]):
     i = Int('i')
     goal_i = Int('goal_i')
     s.add(0 <= goal_i)
+    s.add(goal_i <= 10)
     for command in commands:
         if isinstance(command, GoTo):
             s.add(ForAll([i], Implies(And(0 <= i, i < goal_i, lines[i] == command.line,
@@ -40,7 +41,7 @@ def create_solver(commands: List[Command], variables: List[Variable]):
 
 
 def get_solver_final_values(s: Solver, variables: List[Variable]):
-    if s.check():
+    if s.check() is sat:
         values = s.model()
         final_values = dict()
         for var in variables:
@@ -49,3 +50,4 @@ def get_solver_final_values(s: Solver, variables: List[Variable]):
         return final_values
     else:
         print("Unsat!")
+        return {}
