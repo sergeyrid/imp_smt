@@ -25,7 +25,7 @@ class VariableValue(Expression):
         return vars[self.name][i]
 
     def __repr__(self) -> str:
-        return repr(f'{self.name}')
+        return self.name
 
 
 class Constant(Expression):
@@ -37,7 +37,7 @@ class Constant(Expression):
         return self.value
 
     def __repr__(self) -> str:
-        return repr(f'{self.value}')
+        return str(self.value)
 
 
 class Plus(Expression):
@@ -50,7 +50,7 @@ class Plus(Expression):
         return self.e1.evaluate(vars, i) + self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} + {self.e2})')
+        return f'({self.e1} + {self.e2})'
 
 
 class Minus(Expression):
@@ -63,7 +63,7 @@ class Minus(Expression):
         return self.e1.evaluate(vars, i) - self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} - {self.e2})')
+        return f'({self.e1} - {self.e2})'
 
 
 class Product(Expression):
@@ -76,7 +76,7 @@ class Product(Expression):
         return self.e1.evaluate(vars, i) * self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} * {self.e2})')
+        return f'({self.e1} * {self.e2})'
 
 
 class Division(Expression):
@@ -89,7 +89,7 @@ class Division(Expression):
         return self.e1.evaluate(vars, i) // self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} / {self.e2})')
+        return f'({self.e1} / {self.e2})'
 
 
 class Equal(Expression):
@@ -102,7 +102,7 @@ class Equal(Expression):
         return self.e1.evaluate(vars, i) == self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} == {self.e2})')
+        return f'({self.e1} == {self.e2})'
 
 
 class Less(Expression):
@@ -115,7 +115,7 @@ class Less(Expression):
         return self.e1.evaluate(vars, i) < self.e2.evaluate(vars, i)
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} < {self.e2})')
+        return f'({self.e1} < {self.e2})'
 
 
 class And(Expression):
@@ -128,7 +128,7 @@ class And(Expression):
         return zAnd(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} && {self.e2})')
+        return f'({self.e1} && {self.e2})'
 
 
 class Or(Expression):
@@ -141,7 +141,7 @@ class Or(Expression):
         return zOr(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
 
     def __repr__(self) -> str:
-        return repr(f'({self.e1} || {self.e2})')
+        return f'({self.e1} || {self.e2})'
 
 
 class Not(Expression):
@@ -150,11 +150,10 @@ class Not(Expression):
         self.e = e
 
     def evaluate(self, vars: dict, i: int) -> bool:
-        print(self.e.evaluate(vars, i))
         return zNot(self.e.evaluate(vars, i))
 
     def __repr__(self) -> str:
-        return repr(f'!({self.e})')
+        return f'!({self.e})'
 
 
 class Variable:
@@ -162,7 +161,7 @@ class Variable:
         self.name = name
 
     def __repr__(self) -> str:
-        return repr(self.name)
+        return self.name
 
 
 class Command:
@@ -177,7 +176,7 @@ class Assign(Command):
         self.expr = expr
 
     def __repr__(self) -> str:
-        return repr(f'{self.line}: {self.var.name} = {self.expr}')
+        return f'{self.line}: {self.var.name} = {self.expr}'
 
 
 class GoTo(Command):
@@ -188,7 +187,7 @@ class GoTo(Command):
         self.other_line = other_line
 
     def __repr__(self) -> str:
-        return repr(f'{self.line}: {self.condition} => goto {self.other_line}')
+        return f'{self.line}: {self.condition} => goto {self.other_line}'
 
 
 class Stop(Command):
@@ -196,5 +195,5 @@ class Stop(Command):
         super(Stop, self).__init__(line)
 
     def __repr__(self) -> str:
-        return repr(f'{self.line}: stop')
+        return f'{self.line}: stop'
 

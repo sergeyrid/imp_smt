@@ -1,3 +1,5 @@
+from abc import ABC
+
 from lrparsing import *
 
 from commands import *
@@ -27,11 +29,11 @@ class Parser(Grammar):  # TODO fix everything
         division_expr,
         plus_expr,
         minus_expr,
+        less_expr,
+        equal_expr,
         not_expr,
         and_expr,
-        or_expr,
-        less_expr,
-        equal_expr
+        or_expr
     )
     commands = Ref('commands')
     while_command = Keyword('while') + expr + '{' + commands + '}'
@@ -126,7 +128,7 @@ class Parser(Grammar):  # TODO fix everything
             if len(commands) != 0:
                 new_line = commands[-1].line + 1
             goto1: Command = GoTo(line, expr, new_line + 1)  # FIXME
-            goto2: Command = GoTo(new_line, Constant(Type.BOOL, True), line) # FIXME
+            goto2: Command = GoTo(new_line, Constant(Type.BOOL, True), line)  # FIXME
             return [goto1] + commands + [goto2]
 
     def get_parsed(self) -> tuple:
