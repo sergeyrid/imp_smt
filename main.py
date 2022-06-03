@@ -36,6 +36,8 @@ def solve_file(mode: str, prog_file_name: str, input_file_name: str, output_file
         s = add_constraints(input_file_name, s, '_start')
         s = add_constraints(output_file_name, s, '_final')
         check_sat(s)
+    elif mode == 'get_formula':
+        print(s)
 
 
 def main():
@@ -43,6 +45,8 @@ def main():
         solve_file(argv[1], argv[2], argv[3], '')
     elif argv[1] == 'check_sat':
         solve_file(argv[1], argv[2], argv[3], argv[4])
+    elif argv[1] == 'get_formula':
+        solve_file(argv[1], argv[2], '', '')
 
 
 if __name__ == '__main__':
