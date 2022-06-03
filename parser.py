@@ -1,15 +1,14 @@
-from abc import ABC
+from lrparsing import Grammar, Keyword, List, Prio, Ref, Token, TokenRegistry
 
-from lrparsing import *
-
-from commands import *
-from typing import List as ListType
+from commands import And, Assign, Constant, Division, Equal, Expression, \
+    GoTo, Less, Minus, Not, Or, Plus, Product, Stop, Type, Variable, VariableValue
 
 
-class Parser(Grammar):  # TODO fix everything
-    class T(TokenRegistry):
+class Parser(Grammar):
+    class Registry(TokenRegistry):
         number = Token(re="[0-9]+")
         variable = Token(re="[A-Za-z_][A-Za-z_0-9]*")
+
     expr = Ref('expr')
     brackets_expr = '(' << expr << ')'
     plus_expr = expr << '+' << expr
@@ -21,7 +20,7 @@ class Parser(Grammar):  # TODO fix everything
     and_expr = expr << '&&' << expr
     or_expr = expr << '||' << expr
     not_expr = Token('!') << expr
-    atom = T.variable | T.number
+    atom = Registry.variable | Registry.number
     expr = Prio(
         atom,
         brackets_expr,
@@ -37,11 +36,14 @@ class Parser(Grammar):  # TODO fix everything
     )
     commands = Ref('commands')
     while_command = Keyword('while') + expr + '{' + commands + '}'
-    if_command = Keyword('if') + expr + '{' + commands + '}' + Keyword('else') + '{' + commands + '}'
+    if_command = Keyword('if') + expr + '{' + commands + '}' + \
+        Keyword('else') + '{' + commands + '}'
     stop_command = Keyword('stop')
-    assign_command = T.variable + '=' + expr
-    commands = List(while_command | if_command | stop_command | assign_command, ';', opt=True)
+    assign_command = Registry.variable + '=' + expr
+    commands = List(while_command | if_command |
+                    stop_command | assign_command, ';', opt=True)
     START = commands
+    COMMENTS = (Token(re="#(?:[^\r\n]*(?:\r\n?|\n\r?))"))
 
     variables = dict()
 
@@ -54,12 +56,12 @@ class Parser(Grammar):  # TODO fix everything
             return self.parse_expr(tree[1])
         if tree[0] is Parser.brackets_expr:
             return self.parse_expr(tree[2])
-        if tree[0] is Parser.T.variable:
+        if tree[0] is Parser.Registry.variable:
             name = tree[1]
             if name not in self.variables:
                 self.variables[name] = Variable(name)
             return VariableValue(name)
-        if tree[0] is Parser.T.number:
+        if tree[0] is Parser.Registry.number:
             return Constant(Type.NAT, int(tree[1]))
         if tree[0] is Parser.product_expr:
             expr1 = self.parse_expr(tree[1])
@@ -96,7 +98,7 @@ class Parser(Grammar):  # TODO fix everything
             expr2 = self.parse_expr(tree[3])
             return Equal(expr1, expr2)
 
-    def parse_commands(self, tree: tuple, line: int) -> ListType[Command]:
+    def parse_commands(self, tree: tuple, line: int) -> list:
         if tree[0] is Parser.commands:
             answer = []
             for i in range(1, len(tree), 2):
@@ -119,7 +121,7 @@ class Parser(Grammar):  # TODO fix everything
             if len(commands1) != 0:
                 new_line = commands1[-1].line + 1
             commands2 = self.parse_commands(tree[8], new_line)
-            goto: Command = GoTo(line, expr, new_line)  # FIXME
+            goto = GoTo(line, expr, new_line)
             return [goto] + commands1 + commands2
         if tree[0] is Parser.while_command:
             expr = Not(self.parse_expr(tree[2]))
@@ -127,8 +129,8 @@ class Parser(Grammar):  # TODO fix everything
             commands = self.parse_commands(tree[4], new_line)
             if len(commands) != 0:
                 new_line = commands[-1].line + 1
-            goto1: Command = GoTo(line, expr, new_line + 1)  # FIXME
-            goto2: Command = GoTo(new_line, Constant(Type.BOOL, True), line)  # FIXME
+            goto1 = GoTo(line, expr, new_line + 1)
+            goto2 = GoTo(new_line, Constant(Type.BOOL, True), line)
             return [goto1] + commands + [goto2]
 
     def get_parsed(self) -> tuple:
