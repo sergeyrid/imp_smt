@@ -1,8 +1,9 @@
 from os.path import exists
 from sys import argv
+from z3 import Int
 
 from parser import Parser
-from solver import *
+from solver import check_sat, create_solver, get_final_values, Solver
 
 
 def add_constraints(file_name: str, s: Solver, info: str) -> Solver:
@@ -21,7 +22,8 @@ def add_constraints(file_name: str, s: Solver, info: str) -> Solver:
     return s
 
 
-def solve_file(mode: str, prog_file_name: str, input_file_name: str, output_file_name: str):
+def solve_file(mode: str, prog_file_name: str, input_file_name: str,
+               output_file_name: str) -> None:
     if not exists(prog_file_name):
         raise FileNotFoundError()
     with open(prog_file_name) as file:
@@ -40,7 +42,7 @@ def solve_file(mode: str, prog_file_name: str, input_file_name: str, output_file
         print(s)
 
 
-def main():
+def main() -> None:
     if len(argv) <= 2:
         print('Not enough input arguments, expected at least 1')
         return
