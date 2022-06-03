@@ -31,6 +31,8 @@ def solve_file(mode: str, prog_file_name: str, input_file_name: str,
     p = Parser(text)
     commands, variables = p.get_parsed()
     s = create_solver(commands, variables)
+    if mode == 'get_formula':
+        print(s)
     if mode == 'get_final_values':
         s = add_constraints(input_file_name, s, '_start')
         get_final_values(s, variables)
@@ -38,8 +40,6 @@ def solve_file(mode: str, prog_file_name: str, input_file_name: str,
         s = add_constraints(input_file_name, s, '_start')
         s = add_constraints(output_file_name, s, '_final')
         check_sat(s)
-    elif mode == 'get_formula':
-        print(s)
 
 
 def main() -> None:
