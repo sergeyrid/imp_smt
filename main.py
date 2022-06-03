@@ -41,12 +41,18 @@ def solve_file(mode: str, prog_file_name: str, input_file_name: str, output_file
 
 
 def main():
-    if argv[1] == 'get_final_values':
-        solve_file(argv[1], argv[2], argv[3], '')
-    elif argv[1] == 'check_sat':
-        solve_file(argv[1], argv[2], argv[3], argv[4])
-    elif argv[1] == 'get_formula':
-        solve_file(argv[1], argv[2], '', '')
+    if len(argv) <= 2:
+        print('Not enough input arguments, expected at least 1')
+        return
+    mode = argv[1]
+    prog_file_name = argv[2]
+    input_file_name = ''
+    if len(argv) >= 4:
+        input_file_name = argv[3]
+    output_file_name = ''
+    if len(argv) >= 5:
+        output_file_name = argv[4]
+    solve_file(mode, prog_file_name, input_file_name, output_file_name)
 
 
 if __name__ == '__main__':
