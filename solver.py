@@ -7,14 +7,16 @@ def create_solver(commands: List[Command], variables: List[Variable]):
     lines = Array('lines', IntSort(), IntSort())
     vars = dict()
     s = Solver()
-    for var in variables:
-        vars[var.name] = Array(var.name, IntSort(), IntSort())
-        s.add(vars[var.name][0] == 0)
     s.add(lines[0] == 0)
     i = Int('i')
     goal_i = Int('goal_i')
     s.add(0 <= goal_i)
-    s.add(goal_i <= 10)
+    for var in variables:
+        vars[var.name] = Array(var.name, IntSort(), IntSort())
+        var_start = Int(var.name + '_start')
+        s.add(var_start == vars[var.name][0])
+        final_var = Int(var.name + '_final')
+        s.add(final_var == vars[var.name][goal_i])
     for command in commands:
         if isinstance(command, GoTo):
             s.add(ForAll([i], Implies(And(0 <= i, i < goal_i, lines[i] == command.line,
@@ -34,20 +36,24 @@ def create_solver(commands: List[Command], variables: List[Variable]):
             else:
                 s.add(ForAll([i], Implies(And(0 <= i, i < goal_i, lines[i] == command.line),
                                           vars[var.name][i + 1] == vars[var.name][i])))
-    for var in variables:
-        final_var = Int(var.name + '_final')
-        s.add(final_var == vars[var.name][goal_i])
     return s
 
 
-def get_solver_final_values(s: Solver, variables: List[Variable]):
-    if s.check() is sat:
+def get_final_values(s: Solver, variables: List[Variable]):
+    if s.check() == sat:
         values = s.model()
         final_values = dict()
         for var in variables:
             final_var = Int(var.name + '_final')
             final_values[var.name] = values[final_var]
-        return final_values
+        for var in final_values.keys():
+            print(var + ' = ' + str(final_values[var]))
     else:
-        print("Unsat!")
-        return {}
+        print("Unsatisfiable formula!")
+
+
+def check_sat(s: Solver):
+    if s.check() == sat:
+        print('Programme satisfies given constraints')
+    else:
+        print('Programme does not satisfy given constraints')
