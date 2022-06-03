@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Union
-from z3 import And as zAnd, Or as zOr, Not as zNot
+from z3 import And as zAnd, ArithRef, BoolRef, Int, Not as zNot, \
+    Or as zOr
 
 
 class Type(Enum):
@@ -12,8 +13,8 @@ class Expression:
     def __init__(self, expr_type: Type) -> None:
         self.type = expr_type
 
-    def evaluate(self, vars: dict, i: int) -> Union[int, bool]:
-        pass
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return Int('none')
 
 
 class VariableValue(Expression):
@@ -21,8 +22,8 @@ class VariableValue(Expression):
         super(VariableValue, self).__init__(Type.NAT)
         self.name = name
 
-    def evaluate(self, vars: dict, i: int) -> int:
-        return vars[self.name][i]
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return variables[self.name][i]
 
     def __repr__(self) -> str:
         return self.name
@@ -33,7 +34,7 @@ class Constant(Expression):
         super(Constant, self).__init__(expr_type)
         self.value = value
 
-    def evaluate(self, vars: dict, i: int) -> Union[int, bool]:
+    def evaluate(self, variables: dict, i: int) -> Union[int, bool]:
         return self.value
 
     def __repr__(self) -> str:
@@ -46,8 +47,8 @@ class Plus(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> int:
-        return self.e1.evaluate(vars, i) + self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return self.e1.evaluate(variables, i) + self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} + {self.e2})'
@@ -59,8 +60,8 @@ class Minus(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> int:
-        return self.e1.evaluate(vars, i) - self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return self.e1.evaluate(variables, i) - self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} - {self.e2})'
@@ -72,8 +73,8 @@ class Product(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> int:
-        return self.e1.evaluate(vars, i) * self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return self.e1.evaluate(variables, i) * self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} * {self.e2})'
@@ -85,8 +86,8 @@ class Division(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> int:
-        return self.e1.evaluate(vars, i) // self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> ArithRef:
+        return self.e1.evaluate(variables, i) / self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} / {self.e2})'
@@ -98,8 +99,8 @@ class Equal(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> bool:
-        return self.e1.evaluate(vars, i) == self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> BoolRef:
+        return self.e1.evaluate(variables, i) == self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} == {self.e2})'
@@ -111,8 +112,8 @@ class Less(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> bool:
-        return self.e1.evaluate(vars, i) < self.e2.evaluate(vars, i)
+    def evaluate(self, variables: dict, i: int) -> BoolRef:
+        return self.e1.evaluate(variables, i) < self.e2.evaluate(variables, i)
 
     def __repr__(self) -> str:
         return f'({self.e1} < {self.e2})'
@@ -124,8 +125,8 @@ class And(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> bool:
-        return zAnd(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
+    def evaluate(self, variables: dict, i: int) -> BoolRef:
+        return zAnd(self.e1.evaluate(variables, i), self.e2.evaluate(variables, i))
 
     def __repr__(self) -> str:
         return f'({self.e1} && {self.e2})'
@@ -137,8 +138,8 @@ class Or(Expression):
         self.e1 = e1
         self.e2 = e2
 
-    def evaluate(self, vars: dict, i: int) -> bool:
-        return zOr(self.e1.evaluate(vars, i), self.e2.evaluate(vars, i))
+    def evaluate(self, variables: dict, i: int) -> BoolRef:
+        return zOr(self.e1.evaluate(variables, i), self.e2.evaluate(variables, i))
 
     def __repr__(self) -> str:
         return f'({self.e1} || {self.e2})'
@@ -149,8 +150,8 @@ class Not(Expression):
         super(Not, self).__init__(Type.BOOL)
         self.e = e
 
-    def evaluate(self, vars: dict, i: int) -> bool:
-        return zNot(self.e.evaluate(vars, i))
+    def evaluate(self, variables: dict, i: int) -> BoolRef:
+        return zNot(self.e.evaluate(variables, i))
 
     def __repr__(self) -> str:
         return f'!({self.e})'
@@ -196,4 +197,3 @@ class Stop(Command):
 
     def __repr__(self) -> str:
         return f'{self.line}: stop'
-
